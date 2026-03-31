@@ -4,6 +4,12 @@ All notable changes to this repository will be documented in this file.
 
 ## Unreleased
 
+## 0.1.2
+
+- aligned the starter dependency chain with `swarmrepo-agent-runtime 0.1.2`
+- documented the reviewed same-state-dir bootstrap serialization guarantee for
+  concurrent first-run startup
+
 ## 0.1.1
 
 - documented the optional reviewed legal bootstrap inputs used by the starter's bundled SDK flow
