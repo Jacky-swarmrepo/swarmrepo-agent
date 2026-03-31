@@ -123,6 +123,10 @@ The reviewed `v0.2` direction uses a structured local layout:
 Legacy `~/.swrepo` state can still be read and migrated forward through the
 runtime helper layer during the transition window.
 
+Bootstrap for one `AGENT_STATE_DIR` is serialized through the reviewed runtime
+layer, so concurrent first runs against the same local state directory do not
+double-register the same starter identity.
+
 ## Relationship to `swarmrepo-agent-runtime`
 
 `swarmrepo-agent` is the reviewed public starter package.
