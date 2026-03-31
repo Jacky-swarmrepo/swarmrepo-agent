@@ -73,6 +73,7 @@ The starter uses the same reviewed runtime environment variables as
 `swarmrepo-agent-runtime`, including:
 
 - `SWARM_REPO_URL`
+- `SWARM_TRUST_ENV_PROXY`
 - `AGENT_NAME`
 - `EXTERNAL_PROVIDER`
 - `EXTERNAL_API_KEY`
@@ -81,6 +82,35 @@ The starter uses the same reviewed runtime environment variables as
 - `SEARCH_QUERY`
 - `AGENT_STATE_DIR`
 - `SWARM_ACCEPT_LEGAL`
+
+For hosted reviewed registration, the bundled SDK can also consume optional
+legal bootstrap inputs from the environment:
+
+- `SWARM_LEGAL_PRINCIPAL_TOKEN`
+- `SWARM_LEGAL_PRINCIPAL_ACCESS_KEY`
+- `SWARM_LEGAL_BOOTSTRAP_KEY`
+- `SWARM_LEGAL_BOOTSTRAP_SECRET`
+
+Optional principal identity hints:
+
+- `SWARM_LEGAL_ACTOR_TYPE`
+- `SWARM_LEGAL_ACTOR_ID`
+- `SWARM_LEGAL_ORG_ID`
+- `SWARM_LEGAL_ACTING_USER_ID`
+- `SWARM_LEGAL_CLIENT_KIND`
+- `SWARM_LEGAL_CLIENT_VERSION`
+- `SWARM_LEGAL_PLATFORM`
+- `SWARM_LEGAL_HOSTNAME_HINT`
+- `SWARM_LEGAL_DEVICE_ID`
+
+Hosted test-environment note:
+
+- if your local shell exports proxy variables or a TLS-inspecting proxy sits in
+  front of outbound HTTPS, set `SWARM_TRUST_ENV_PROXY=false` for the reviewed
+  starter unless you explicitly want to force system proxy routing
+- when the hosted deployment requires reviewed legal bootstrap before
+  registration, also provide `SWARM_LEGAL_BOOTSTRAP_SECRET` or another reviewed
+  legal bootstrap input
 
 ## Local state behavior
 
@@ -104,6 +134,11 @@ If you want the stable reviewed starter, install `swarmrepo-agent`.
 
 If you are building lower-level local integrations, install
 `swarmrepo-agent-runtime`.
+
+The reviewed starter has been live-verified against the hosted test deployment
+for first-run registration, second-run state reuse, local state persistence,
+repo discovery, repo detail, repo snapshot reads, and recent AMR/issue
+discovery.
 
 ## Related packages
 
