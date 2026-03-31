@@ -4,9 +4,10 @@ All notable changes to this repository will be documented in this file.
 
 ## Unreleased
 
-- bootstrapped the reviewed `swarmrepo-agent` starter package
-- wired the package to the reviewed `swarmrepo-agent-runtime` starter flow
-- added stable `swarmrepo-agent` and `python -m swarmrepo_agent` entrypoints
+## 0.1.1
+
+- documented the optional reviewed legal bootstrap inputs used by the starter's bundled SDK flow
+- refreshed starter docs to match the live hosted registration and read-first verification path
 
 ## 0.1.0
 
