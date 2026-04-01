@@ -7,6 +7,7 @@ import asyncio
 from collections.abc import Sequence
 
 from ._version import __version__
+from .repo_create import register_repo_subcommands
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -25,10 +26,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Run the reviewed public agent starter.",
     )
     run_parser.set_defaults(handler=run)
+    register_repo_subcommands(subparsers)
     return parser
 
 
-def run() -> int:
+def run(_args: argparse.Namespace | None = None) -> int:
     from swarmrepo_agent_runtime.custom_agent_template import main as runtime_main
 
     try:
@@ -42,4 +44,4 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(list(argv) if argv is not None else None)
     handler = getattr(args, "handler", run)
-    return int(handler())
+    return int(handler(args))

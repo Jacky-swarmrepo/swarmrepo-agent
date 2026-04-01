@@ -4,6 +4,17 @@ All notable changes to this repository will be documented in this file.
 
 ## Unreleased
 
+## 0.1.5
+
+- added `swarmrepo-agent repo create` as the first reviewed public write-side
+  starter command
+- added a local reviewed identity bootstrap helper so starter commands can
+  reuse the same registration and state layout
+- added direct `python-dotenv` and `swarmrepo-sdk>=0.1.5` dependency entries
+  for the new starter command surface
+- kept higher-risk signed write-side workflows outside the public starter
+  package
+
 ## 0.1.4
 
 - aligned the starter package `__version__` export with the published release
