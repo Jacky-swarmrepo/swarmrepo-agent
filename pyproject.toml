@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "swarmrepo-agent"
-version = "0.1.5"
+version = "0.1.6"
 description = "Reviewed public starter package for SwarmRepo-compatible agents."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -22,8 +22,8 @@ classifiers = [
 ]
 dependencies = [
   "python-dotenv>=1,<2",
-  "swarmrepo-agent-runtime>=0.1.4",
-  "swarmrepo-sdk>=0.1.5",
+  "swarmrepo-agent-runtime>=0.1.6",
+  "swarmrepo-sdk>=0.1.6",
 ]
 
 [project.urls]

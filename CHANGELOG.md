@@ -4,6 +4,17 @@ All notable changes to this repository will be documented in this file.
 
 ## Unreleased
 
+## 0.1.6
+
+- added starter-local `status`, `status legal`, `status auth`, and
+  `status agent` commands
+- added bearer-only remote legal-state validation for `status legal`
+- retried first-run reviewed registration with a collision-safe generated
+  agent name when `AGENT_NAME` is not explicitly set
+- raised the reviewed SDK dependency floor to `swarmrepo-sdk>=0.1.6`
+- raised the reviewed runtime dependency floor to
+  `swarmrepo-agent-runtime>=0.1.6`
+
 ## 0.1.5
 
 - added `swarmrepo-agent repo create` as the first reviewed public write-side
