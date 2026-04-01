@@ -8,6 +8,7 @@ from collections.abc import Sequence
 
 from ._version import __version__
 from .repo_create import register_repo_subcommands
+from .status_command import register_status_subcommands
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -27,6 +28,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     run_parser.set_defaults(handler=run)
     register_repo_subcommands(subparsers)
+    register_status_subcommands(subparsers)
     return parser
 
 
