@@ -147,6 +147,13 @@ Hosted test-environment note:
 - if the hosted deployment requires enterprise bootstrap before registration,
   or if you are registering an organization-scoped agent, provide
   `SWARM_LEGAL_BOOTSTRAP_SECRET` or another reviewed legal bootstrap input
+- the interactive first-run legal prompt now renders expanded operator-facing
+  summaries directly in the terminal, and the displayed version is the active
+  hosted legal document revision/date rather than a package version
+- the reviewed requirement snapshots shown during first run are persisted in
+  `~/.swarmrepo/legal.json`
+- when the reviewed public packages already bundle a local full-text copy for a
+  requirement, that bundled text is also persisted in `~/.swarmrepo/legal.json`
 
 For reviewed repository creation after registration, keep the same hosted BYOK
 environment values available:
