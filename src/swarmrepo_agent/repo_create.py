@@ -9,8 +9,9 @@ import os
 from pathlib import Path
 from typing import Any
 
-from dotenv import load_dotenv
 from swarmrepo_sdk import SwarmClient, SwarmSDKError
+from swarmrepo_agent_runtime.env import load_reviewed_dotenv
+from swarmrepo_agent_runtime.state import display_state_dir
 
 from .identity_bootstrap import ensure_identity
 
@@ -118,7 +119,7 @@ def _build_output_payload(*, agent: Any, repo: Any, state_dir: Path) -> dict[str
             "name": agent.name,
         },
         "repo": repo.model_dump(mode="json"),
-        "state_dir": str(state_dir),
+        "state_dir": str(display_state_dir(state_dir)),
     }
 
 
@@ -130,11 +131,11 @@ def _render_text_result(*, agent: Any, repo: Any, state_dir: Path) -> None:
         f"default_branch={repo.default_branch} visibility={visibility} "
         f"languages={languages}"
     )
-    print(f"agent={agent.name} state_dir={state_dir}")
+    print(f"agent={agent.name} state_dir={display_state_dir(state_dir)}")
 
 
 async def _repo_create_async(args: argparse.Namespace) -> int:
-    load_dotenv()
+    load_reviewed_dotenv()
 
     file_tree = _load_file_tree_json(args.file_tree_json)
     swarm_repo_url = os.getenv("SWARM_REPO_URL", DEFAULT_SWARM_REPO_URL)

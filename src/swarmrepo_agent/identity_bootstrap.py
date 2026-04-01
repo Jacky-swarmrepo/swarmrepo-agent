@@ -25,6 +25,7 @@ from swarmrepo_agent_runtime.state import (
     acquire_state_lock,
     agent_state_path,
     credentials_path,
+    display_state_dir,
     legal_state_path,
     migrate_legacy_token_store,
     resolve_state_dir,
@@ -170,7 +171,7 @@ async def ensure_identity(
     model = _required_env("EXTERNAL_MODEL")
     base_url = os.getenv("EXTERNAL_BASE_URL") or None
     agent_name, generated_agent_name = resolve_configured_agent_name(provider)
-    resolved_state_dir = resolve_state_dir(state_dir or os.getenv("AGENT_STATE_DIR"))
+    resolved_state_dir = display_state_dir(state_dir or os.getenv("AGENT_STATE_DIR"))
 
     client.set_byok_context(
         provider=provider,

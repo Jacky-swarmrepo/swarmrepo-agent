@@ -6,15 +6,15 @@ import argparse
 import asyncio
 import json
 import os
-from pathlib import Path
 from typing import Any
 
-from dotenv import load_dotenv
 from swarmrepo_sdk import DEFAULT_SWARM_REPO_URL
 
+from swarmrepo_agent_runtime.env import load_reviewed_dotenv
 from swarmrepo_agent_runtime.state import (
     agent_state_path,
     credentials_path,
+    display_state_dir,
     legal_state_path,
     load_state_document,
     resolve_state_dir,
@@ -74,6 +74,7 @@ def _render_payload(payload: dict[str, Any], *, as_json: bool) -> None:
     warnings = payload.get("warnings") or []
     data = payload.get("data") or {}
     command = payload.get("command")
+    resolved_state_dir = payload.get("state_dir") or "(unknown)"
 
     if command == "status auth":
         auth_summary = data.get("auth_summary") or {}
@@ -87,6 +88,7 @@ def _render_payload(payload: dict[str, Any], *, as_json: bool) -> None:
         print(
             f"- refresh token storage: {auth_summary.get('refresh_token_storage') or '(unknown)'}"
         )
+        print(f"- state dir: {resolved_state_dir}")
     elif command == "status legal":
         legal_summary = data.get("legal_summary") or {}
         evidence_status = (
@@ -99,6 +101,7 @@ def _render_payload(payload: dict[str, Any], *, as_json: bool) -> None:
             f"{legal_summary.get('agent_contributor_terms_version') or '(missing)'}"
         )
         print(f"- evidence: {evidence_status}")
+        print(f"- state dir: {resolved_state_dir}")
         print("See also: swarmrepo-agent status legal --json")
     elif command == "status agent":
         agent_summary = data.get("agent_summary") or {}
@@ -110,6 +113,7 @@ def _render_payload(payload: dict[str, Any], *, as_json: bool) -> None:
             f"{agent_summary.get('model') or '(missing)'}"
         )
         print(f"- base_url: {agent_summary.get('base_url') or '(missing)'}")
+        print(f"- state dir: {resolved_state_dir}")
     else:
         auth_summary = data.get("auth_summary") or {}
         legal_summary = data.get("legal_summary") or {}
@@ -130,15 +134,17 @@ def _render_payload(payload: dict[str, Any], *, as_json: bool) -> None:
         print(f"- legal evidence: {evidence_status}")
         print(f"- agent: {agent_summary.get('agent_name') or '(missing)'}")
         print(f"- endpoint: {endpoint_summary.get('base_url') or '(unset)'}")
+        print(f"- state dir: {resolved_state_dir}")
 
     for warning in warnings:
         print(f"warning: {warning}")
 
 
 async def _status_async(args: argparse.Namespace) -> int:
-    load_dotenv()
+    load_reviewed_dotenv()
 
     resolved_state_dir = resolve_state_dir(args.state_dir or os.getenv("AGENT_STATE_DIR"))
+    rendered_state_dir = str(display_state_dir(resolved_state_dir))
     credentials = load_state_document(credentials_path(resolved_state_dir))
     legal = load_state_document(legal_state_path(resolved_state_dir))
     agent = load_state_document(agent_state_path(resolved_state_dir))
@@ -162,18 +168,20 @@ async def _status_async(args: argparse.Namespace) -> int:
     agent_summary = build_agent_summary(agent)
     endpoint_summary = build_endpoint_summary(
         base_url=base_url,
-        state_dir=str(Path(resolved_state_dir)),
+        state_dir=rendered_state_dir,
     )
 
     if args.section == "auth":
         payload = {
             "command": "status auth",
+            "state_dir": rendered_state_dir,
             "data": {"auth_summary": auth_summary},
             "warnings": warnings,
         }
     elif args.section == "legal":
         payload = {
             "command": "status legal",
+            "state_dir": rendered_state_dir,
             "data": {
                 "legal_summary": legal_summary,
                 "remote_legal_error": remote_legal_error,
@@ -183,12 +191,14 @@ async def _status_async(args: argparse.Namespace) -> int:
     elif args.section == "agent":
         payload = {
             "command": "status agent",
+            "state_dir": rendered_state_dir,
             "data": {"agent_summary": agent_summary},
             "warnings": warnings,
         }
     else:
         payload = {
             "command": "status",
+            "state_dir": rendered_state_dir,
             "data": build_overview(
                 auth_summary=auth_summary,
                 legal_summary=legal_summary,

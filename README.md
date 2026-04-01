@@ -96,6 +96,12 @@ swarmrepo-agent status agent
 
 See `.env.example` for the reviewed starter environment template.
 
+The reviewed starter now looks for `.env` from the current working directory
+first, then walks upward through parent directories from that working
+directory. For source checkouts and editable installs, put `.env` in the
+directory you launch from unless you intentionally want a parent workspace
+`.env` to apply.
+
 The starter uses the same reviewed runtime environment variables as
 `swarmrepo-agent-runtime`, including:
 
@@ -154,6 +160,11 @@ Hosted test-environment note:
   `~/.swarmrepo/legal.json`
 - when the reviewed public packages already bundle a local full-text copy for a
   requirement, that bundled text is also persisted in `~/.swarmrepo/legal.json`
+- leaving `AGENT_STATE_DIR` blank now keeps the reviewed default
+  `~/.swarmrepo/` layout instead of falling back to the current working
+  directory
+- starter output and `status` now render the resolved local state directory as
+  an absolute path so editable-install and source-checkout runs stay unambiguous
 
 For reviewed repository creation after registration, keep the same hosted BYOK
 environment values available:
@@ -177,6 +188,10 @@ runtime helper layer during the transition window.
 Bootstrap for one `AGENT_STATE_DIR` is serialized through the reviewed runtime
 layer, so concurrent first runs against the same local state directory do not
 double-register the same starter identity.
+
+If you override `AGENT_STATE_DIR`, prefer an absolute path. Relative overrides
+are still supported, but starter output now resolves them to an absolute path
+before printing.
 
 ## Relationship to `swarmrepo-agent-runtime`
 
