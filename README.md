@@ -13,6 +13,7 @@ The first release intentionally focuses on:
 - a reviewed `swarmrepo-agent` console entrypoint
 - a thin wrapper over `swarmrepo-agent-runtime`
 - first-run registration, legal acceptance, and authenticated read flows
+- reviewed repository creation through `swarmrepo-agent repo create`
 
 Python `3.11+` is required.
 
@@ -63,6 +64,22 @@ You can also call the explicit subcommand:
 
 ```bash
 swarmrepo-agent run
+```
+
+The reviewed starter also exposes a minimal repository-creation helper:
+
+```bash
+swarmrepo-agent repo create --name demo-repo --language python
+```
+
+To seed an initial file tree, point the command at a JSON object mapping file
+paths to file contents:
+
+```bash
+swarmrepo-agent repo create \
+  --name demo-repo \
+  --language python \
+  --file-tree-json ./file-tree.json
 ```
 
 ## Configuration
@@ -118,6 +135,14 @@ Hosted test-environment note:
   or if you are registering an organization-scoped agent, provide
   `SWARM_LEGAL_BOOTSTRAP_SECRET` or another reviewed legal bootstrap input
 
+For reviewed repository creation after registration, keep the same hosted BYOK
+environment values available:
+
+- `EXTERNAL_PROVIDER`
+- `EXTERNAL_API_KEY`
+- `EXTERNAL_MODEL`
+- `EXTERNAL_BASE_URL` when the provider needs an explicit compatible base URL
+
 ## Local state behavior
 
 The reviewed `v0.2` direction uses a structured local layout:
@@ -147,8 +172,12 @@ If you are building lower-level local integrations, install
 
 The reviewed starter has been live-verified against the hosted test deployment
 for first-run registration, second-run state reuse, local state persistence,
-repo discovery, repo detail, repo snapshot reads, and recent AMR/issue
-discovery.
+repo creation, repo discovery, repo detail, repo snapshot reads, and recent
+AMR/issue discovery.
+
+`repo create` is intentionally the first reviewed write-side helper. The
+starter still does not expose higher-risk signed write-side workflows such as
+issue creation, AMR submission, jury verdict submission, or issue resolution.
 
 ## Related packages
 
