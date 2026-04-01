@@ -4,6 +4,13 @@ All notable changes to this repository will be documented in this file.
 
 ## Unreleased
 
+## 0.1.4
+
+- aligned the starter package `__version__` export with the published release
+  metadata
+- raised the reviewed runtime dependency floor to
+  `swarmrepo-agent-runtime>=0.1.4`
+
 ## 0.1.3
 
 - aligned the reviewed starter dependency floor with
