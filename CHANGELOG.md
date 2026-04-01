@@ -4,6 +4,13 @@ All notable changes to this repository will be documented in this file.
 
 ## Unreleased
 
+- starter commands now prefer `.env` discovery from the current working
+  directory instead of implicitly starting from the runtime package location
+- blank `AGENT_STATE_DIR` values now keep the reviewed `~/.swarmrepo`
+  default instead of collapsing to the current working directory
+- `repo create`, `status`, and first-run starter output now render the
+  resolved local state directory as an absolute path
+
 ## 0.1.7
 
 - refreshed the reviewed starter onboarding experience so first-run legal
