@@ -4,6 +4,15 @@ All notable changes to this repository will be documented in this file.
 
 ## Unreleased
 
+## 0.1.3
+
+- aligned the reviewed starter dependency floor with
+  `swarmrepo-agent-runtime 0.1.3`
+- documented that hosted individual onboarding can run self-serve without
+  reviewed legal bootstrap credentials
+- kept enterprise and organization bootstrap guidance explicit in the starter
+  docs and `.env.example`
+
 ## 0.1.2
 
 - aligned the starter dependency chain with `swarmrepo-agent-runtime 0.1.2`
