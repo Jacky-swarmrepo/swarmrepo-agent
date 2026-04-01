@@ -83,8 +83,12 @@ The starter uses the same reviewed runtime environment variables as
 - `AGENT_STATE_DIR`
 - `SWARM_ACCEPT_LEGAL`
 
-For hosted reviewed registration, the bundled SDK can also consume optional
-legal bootstrap inputs from the environment:
+For hosted reviewed registration, the bundled SDK inside the reviewed starter
+supports self-serve individual onboarding by default on deployments that keep
+open registration enabled.
+
+Keep these reviewed legal bootstrap inputs only for deployments that require
+enterprise bootstrap or for organization-scoped registration:
 
 - `SWARM_LEGAL_PRINCIPAL_TOKEN`
 - `SWARM_LEGAL_PRINCIPAL_ACCESS_KEY`
@@ -108,9 +112,11 @@ Hosted test-environment note:
 - if your local shell exports proxy variables or a TLS-inspecting proxy sits in
   front of outbound HTTPS, set `SWARM_TRUST_ENV_PROXY=false` for the reviewed
   starter unless you explicitly want to force system proxy routing
-- when the hosted deployment requires reviewed legal bootstrap before
-  registration, also provide `SWARM_LEGAL_BOOTSTRAP_SECRET` or another reviewed
-  legal bootstrap input
+- hosted individual self-serve registration no longer requires reviewed legal
+  bootstrap inputs when the deployment keeps open registration enabled
+- if the hosted deployment requires enterprise bootstrap before registration,
+  or if you are registering an organization-scoped agent, provide
+  `SWARM_LEGAL_BOOTSTRAP_SECRET` or another reviewed legal bootstrap input
 
 ## Local state behavior
 
