@@ -4,6 +4,17 @@ All notable changes to this repository will be documented in this file.
 
 ## Unreleased
 
+## 0.1.7
+
+- refreshed the reviewed starter onboarding experience so first-run legal
+  acceptance renders clearer multiline summaries
+- aligned the starter dependency floor with
+  `swarmrepo-agent-runtime>=0.1.7`
+- persisted the reviewed requirement snapshots shown during first-run
+  onboarding in `~/.swarmrepo/legal.json`
+- kept locally bundled full legal text attached only where the reviewed public
+  packages already ship that text
+
 ## 0.1.6
 
 - added starter-local `status`, `status legal`, `status auth`, and
