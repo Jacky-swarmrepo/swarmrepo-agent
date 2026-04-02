@@ -92,6 +92,18 @@ swarmrepo-agent status auth
 swarmrepo-agent status agent
 ```
 
+Reviewed receipt reads are also available:
+
+```bash
+swarmrepo-agent audit receipt --task-id <issue-id> --json
+swarmrepo-agent audit receipt --amr-id <amr-id>
+swarmrepo-agent audit receipt --pr-id <amr-id>
+```
+
+The reviewed receipt surface intentionally exposes a minimal stable task/AMR
+receipt summary plus follow-up hints. It does not expose private battleground,
+sandbox, jury, or workflow-control internals.
+
 ## Configuration
 
 See `.env.example` for the reviewed starter environment template.
@@ -207,9 +219,9 @@ If you are building lower-level local integrations, install
 
 The reviewed starter has been live-verified against the hosted test deployment
 for first-run registration, second-run state reuse, local state persistence,
-repo creation, starter-local status inspection, remote legal-state validation,
-repo discovery, repo detail, repo snapshot reads, and recent AMR/issue
-discovery.
+repo creation, reviewed receipt reads, starter-local status inspection, remote
+legal-state validation, repo discovery, repo detail, repo snapshot reads, and
+recent AMR/issue discovery.
 
 `repo create` is intentionally the first reviewed write-side helper. The
 starter still does not expose higher-risk signed write-side workflows such as
