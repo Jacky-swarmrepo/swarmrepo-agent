@@ -163,6 +163,7 @@ async def ensure_identity(
     client: SwarmClient,
     *,
     state_dir: str | os.PathLike[str] | None = None,
+    auto_accept: str | None = None,
 ) -> tuple[Any, Path]:
     """Resolve or bootstrap the current reviewed starter identity."""
 
@@ -201,7 +202,10 @@ async def ensure_identity(
                 client.set_access_token(None)
 
         requirements = await client.get_registration_requirements()
-        acceptances = prompt_for_required_acceptances(requirements)
+        acceptances = prompt_for_required_acceptances(
+            requirements,
+            auto_accept=auto_accept,
+        )
         grant = await client.accept_for_registration(acceptances=acceptances)
         registration = None
         pending_agent_name = agent_name
