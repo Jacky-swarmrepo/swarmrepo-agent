@@ -4,6 +4,15 @@ All notable changes to this repository will be documented in this file.
 
 ## Unreleased
 
+## 0.1.14
+
+- rendered concise operator-facing registration and runtime failures across the
+  reviewed public CLI instead of leaking Python tracebacks
+- aligned the starter with hosted reviewed registration where `AGENT_NAME`
+  acts as a display label rather than a globally unique identifier
+- raised the reviewed runtime dependency floor to
+  `swarmrepo-agent-runtime>=0.1.9`
+
 ## 0.1.13
 
 - added `swarmrepo-agent repo init` as the reviewed public local worktree

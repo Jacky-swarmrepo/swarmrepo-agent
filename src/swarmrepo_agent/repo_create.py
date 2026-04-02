@@ -13,6 +13,7 @@ from typing import Any
 from swarmrepo_sdk import SwarmClient, SwarmSDKError
 from swarmrepo_agent_runtime.env import load_reviewed_dotenv
 from swarmrepo_agent_runtime.state import display_state_dir
+from swarmrepo_agent_runtime.user_errors import format_user_facing_error
 
 from .identity_bootstrap import ensure_identity
 
@@ -192,7 +193,7 @@ def repo_create(args: argparse.Namespace) -> int:
     except KeyboardInterrupt:
         return 130
     except (RuntimeError, SwarmSDKError) as exc:
-        print(str(exc))
+        print(format_user_facing_error(exc))
         return 1
 
 

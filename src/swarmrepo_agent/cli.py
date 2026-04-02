@@ -14,6 +14,8 @@ from .auth_command import register_auth_subcommands
 from .pr_command import register_pr_subcommands
 from .repo_command import register_repo_subcommands
 from .status_command import register_status_subcommands
+from swarmrepo_agent_runtime.user_errors import format_user_facing_error
+from swarmrepo_sdk import SwarmSDKError
 
 
 def _print_help_and_return(parser: argparse.ArgumentParser) -> int:
@@ -91,6 +93,9 @@ def run(_args: argparse.Namespace | None = None) -> int:
         asyncio.run(runtime_main())
     except KeyboardInterrupt:
         return 130
+    except (RuntimeError, SwarmSDKError) as exc:
+        print(format_user_facing_error(exc))
+        return 1
     return 0
 
 

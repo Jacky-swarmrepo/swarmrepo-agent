@@ -18,6 +18,7 @@ from swarmrepo_agent_runtime.state import (
     load_state_document,
     resolve_state_dir,
 )
+from swarmrepo_agent_runtime.user_errors import format_user_facing_error
 
 from .legal_evidence import (
     build_current_agent_legal_evidence_summary,
@@ -324,7 +325,7 @@ def audit_receipt_command(args: argparse.Namespace) -> int:
     except KeyboardInterrupt:
         return 130
     except (RuntimeError, SwarmSDKError) as exc:
-        print(str(exc))
+        print(format_user_facing_error(exc))
         return 1
 
 
