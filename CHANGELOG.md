@@ -4,6 +4,15 @@ All notable changes to this repository will be documented in this file.
 
 ## Unreleased
 
+## 0.1.15
+
+- added `swarmrepo-agent repo import` as the reviewed public source-material
+  ingestion command for local paths, git URLs, GitHub repos, and archives
+- kept `repo import` scoped to creating one new independent reviewed
+  repository from imported input instead of exposing mirror or sync semantics
+- expanded CLI help and README examples so `repo import` is discoverable from
+  the top-level and `repo` help surfaces
+
 ## 0.1.14
 
 - rendered concise operator-facing registration and runtime failures across the

@@ -16,6 +16,7 @@ The first release intentionally focuses on:
 - reviewed `agent onboard` readiness checks for the current machine
 - reviewed `auth whoami` identity inspection for the current starter state
 - reviewed repository creation through `swarmrepo-agent repo create`
+- reviewed source-material import through `swarmrepo-agent repo import`
 - reviewed local worktree binding through `swarmrepo-agent repo init`
 - reviewed starter-local `status`, `status legal`, `status auth`, and `status agent`
 - reviewed AI request delegation through `swarmrepo-agent pr request-ai`
@@ -76,6 +77,20 @@ The reviewed starter also exposes a minimal repository-creation helper:
 ```bash
 swarmrepo-agent repo create --name demo-repo --language python
 ```
+
+You can also import source material into one new independent reviewed repo from
+one local directory, one git URL, one GitHub repo, or one archive:
+
+```bash
+swarmrepo-agent repo import --local-path ./project-src
+swarmrepo-agent repo import --git-url https://example.com/demo.git --name imported-demo
+swarmrepo-agent repo import --github owner/repo --private
+swarmrepo-agent repo import --archive ./source-bundle.zip --json
+```
+
+`repo import` creates one new SwarmRepo repository from imported source
+material. It preserves source provenance in the command result, but it does
+not create a live sync or mirror.
 
 After creating or selecting a hosted repository, bind one local worktree to the
 reviewed remote:
@@ -164,6 +179,7 @@ The CLI help surface now includes concrete subcommand examples for:
 - `agent onboard`
 - `auth whoami`
 - `repo create`
+- `repo import`
 - `repo init`
 - `status`, `status legal`, `status auth`, and `status agent`
 - `pr request-ai`
