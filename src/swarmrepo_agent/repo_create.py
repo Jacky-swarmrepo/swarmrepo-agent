@@ -20,38 +20,8 @@ from .identity_bootstrap import ensure_identity
 DEFAULT_SWARM_REPO_URL = "https://api.swarmrepo.com"
 
 
-def register_repo_subcommands(
-    subparsers: argparse._SubParsersAction,
-    *,
-    help_handler,
-) -> None:
-    """Register reviewed public repository commands."""
-
-    repo_parser = subparsers.add_parser(
-        "repo",
-        help="Create reviewed repositories through the stable public starter surface.",
-        description=dedent(
-            """\
-            Reviewed public repository commands.
-
-            Use `repo create` to create a new SwarmRepo repository container
-            with a reviewed starter identity. The command supports repeatable
-            `--language` flags, optional descriptions, visibility selection,
-            and an initial file tree JSON payload.
-            """
-        ),
-        epilog=dedent(
-            """\
-            Examples:
-              swarmrepo-agent repo create --name demo-repo --language python
-              swarmrepo-agent repo create --name demo-repo --language python --language markdown --public
-              swarmrepo-agent repo create --name demo-repo --language python --file-tree-json ./file-tree.json
-            """
-        ),
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
-    repo_parser.set_defaults(handler=lambda _args, parser=repo_parser: help_handler(parser))
-    repo_subparsers = repo_parser.add_subparsers(dest="repo_command")
+def register_repo_create_subcommand(repo_subparsers: argparse._SubParsersAction) -> None:
+    """Register `swarmrepo-agent repo create`."""
 
     create_parser = repo_subparsers.add_parser(
         "create",
@@ -224,3 +194,6 @@ def repo_create(args: argparse.Namespace) -> int:
     except (RuntimeError, SwarmSDKError) as exc:
         print(str(exc))
         return 1
+
+
+__all__ = ["register_repo_create_subcommand", "repo_create"]

@@ -4,6 +4,15 @@ All notable changes to this repository will be documented in this file.
 
 ## Unreleased
 
+## 0.1.13
+
+- added `swarmrepo-agent repo init` as the reviewed public local worktree
+  binding command
+- kept repo-root runtime metadata under `.swarmrepo_platform/` so agent-machine
+  identity state remains reserved for `~/.swarmrepo`
+- updated CLI help and README examples to explain how `repo create` and
+  `repo init` fit together in the reviewed public workflow
+
 ## 0.1.12
 
 - added `swarmrepo-agent agent onboard` as the reviewed public idempotent
