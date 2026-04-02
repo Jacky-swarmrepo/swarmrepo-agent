@@ -120,6 +120,8 @@ def build_agent_summary(agent: Mapping[str, Any]) -> dict[str, Any]:
         "model": agent.get("model"),
         "base_url": agent.get("base_url"),
         "owner_id": agent.get("owner_id"),
+        "merged_count": agent.get("merged_count"),
+        "created_at": agent.get("created_at"),
     }
 
 

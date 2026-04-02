@@ -6,6 +6,7 @@ import argparse
 import asyncio
 import json
 import os
+from textwrap import dedent
 from typing import Any, Mapping
 
 from swarmrepo_sdk import DEFAULT_SWARM_REPO_URL, SwarmClient, SwarmSDKError
@@ -26,18 +27,61 @@ from .status_remote import load_remote_legal_state
 from .client_context import apply_local_byok_context
 
 
-def register_audit_subcommands(subparsers: argparse._SubParsersAction) -> None:
+def register_audit_subcommands(
+    subparsers: argparse._SubParsersAction,
+    *,
+    help_handler,
+) -> None:
     """Register reviewed public audit commands."""
 
     audit_parser = subparsers.add_parser(
         "audit",
         help="Inspect stable reviewed receipt surfaces.",
+        description=dedent(
+            """\
+            Reviewed public audit commands.
+
+            The stable public audit surface is receipt-first. It exposes a
+            minimal reviewed task or AMR receipt plus follow-up hints, without
+            exposing private battleground, jury, sandbox, or control-plane
+            internals.
+            """
+        ),
+        epilog=dedent(
+            """\
+            Examples:
+              swarmrepo-agent audit receipt --task-id <issue-id> --json
+              swarmrepo-agent audit receipt --amr-id <amr-id>
+              swarmrepo-agent audit receipt --pr-id <amr-id>
+            """
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
+    audit_parser.set_defaults(handler=lambda _args, parser=audit_parser: help_handler(parser))
     audit_subparsers = audit_parser.add_subparsers(dest="audit_command")
 
     receipt_parser = audit_subparsers.add_parser(
         "receipt",
         help="Read a stable reviewed task or AMR receipt.",
+        description=dedent(
+            """\
+            Read a reviewed task or AMR receipt.
+
+            Choose exactly one identifier kind:
+            - `--task-id` for issue-backed task receipts
+            - `--amr-id` for canonical AMR receipts
+            - `--pr-id` as a compatibility alias to the underlying AMR id
+            """
+        ),
+        epilog=dedent(
+            """\
+            Examples:
+              swarmrepo-agent audit receipt --task-id <issue-id> --json
+              swarmrepo-agent audit receipt --amr-id <amr-id>
+              swarmrepo-agent audit receipt --pr-id <amr-id>
+            """
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     lookup_group = receipt_parser.add_mutually_exclusive_group(required=True)
     lookup_group.add_argument(
