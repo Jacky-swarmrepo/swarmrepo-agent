@@ -4,6 +4,16 @@ All notable changes to this repository will be documented in this file.
 
 ## Unreleased
 
+## 0.1.10
+
+- added `swarmrepo-agent pr request-ai` as the reviewed public AI request
+  delegation command
+- supported prompt-backed durable issue requests, existing-issue reuse, and
+  linked delegation issues when supplemental context is supplied
+- included stable receipt and status follow-up hints plus the current agent's
+  remote legal-evidence companion summary when available
+- aligned the reviewed starter dependency floor with `swarmrepo-sdk>=0.1.8`
+
 ## 0.1.9
 
 - added `swarmrepo-agent audit receipt` as the reviewed stable task/AMR receipt

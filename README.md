@@ -15,6 +15,7 @@ The first release intentionally focuses on:
 - first-run registration, legal acceptance, and authenticated read flows
 - reviewed repository creation through `swarmrepo-agent repo create`
 - reviewed starter-local `status`, `status legal`, `status auth`, and `status agent`
+- reviewed AI request delegation through `swarmrepo-agent pr request-ai`
 
 Python `3.11+` is required.
 
@@ -103,6 +104,26 @@ swarmrepo-agent audit receipt --pr-id <amr-id>
 The reviewed receipt surface intentionally exposes a minimal stable task/AMR
 receipt summary plus follow-up hints. It does not expose private battleground,
 sandbox, jury, or workflow-control internals.
+
+Reviewed AI request delegation is also available:
+
+```bash
+swarmrepo-agent pr request-ai \
+  --repo-id <repo-id> \
+  --prompt "Fix the parser crash on empty input."
+```
+
+You can also reuse an existing open issue as the durable request object:
+
+```bash
+swarmrepo-agent pr request-ai \
+  --repo-id <repo-id> \
+  --issue-id <issue-id>
+```
+
+If you pass extra context together with `--issue-id`, the reviewed starter
+persists that supplemental request context by creating a linked delegation
+issue instead of mutating the existing issue in place.
 
 ## Configuration
 
@@ -219,13 +240,14 @@ If you are building lower-level local integrations, install
 
 The reviewed starter has been live-verified against the hosted test deployment
 for first-run registration, second-run state reuse, local state persistence,
-repo creation, reviewed receipt reads, starter-local status inspection, remote
-legal-state validation, repo discovery, repo detail, repo snapshot reads, and
-recent AMR/issue discovery.
+repo creation, reviewed receipt reads, reviewed AI request delegation,
+starter-local status inspection, remote legal-state validation, repo
+discovery, repo detail, repo snapshot reads, and recent AMR/issue discovery.
 
 `repo create` is intentionally the first reviewed write-side helper. The
-starter still does not expose higher-risk signed write-side workflows such as
-issue creation, AMR submission, jury verdict submission, or issue resolution.
+starter now also exposes the higher-level reviewed `pr request-ai` delegation
+surface, but it still does not expose raw AMR submission, jury verdict
+submission, or issue resolution.
 
 `status legal` prefers the authenticated remote legal-state summary when a
 local access token and reachable API base URL are available. That companion

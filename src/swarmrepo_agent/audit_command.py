@@ -23,6 +23,7 @@ from .legal_evidence import (
     build_legal_state_follow_up_lines,
 )
 from .status_remote import load_remote_legal_state
+from .client_context import apply_local_byok_context
 
 
 def register_audit_subcommands(subparsers: argparse._SubParsersAction) -> None:
@@ -85,36 +86,6 @@ def _resolve_state_documents(state_dir: str | None) -> tuple[str, dict[str, Any]
     credentials = load_state_document(credentials_path(resolved_state_dir))
     agent = load_state_document(agent_state_path(resolved_state_dir))
     return resolved_state_dir, credentials, agent
-
-
-def _apply_local_byok_context(
-    client: SwarmClient,
-    *,
-    agent: Mapping[str, Any],
-    credentials: Mapping[str, Any],
-) -> None:
-    provider = (
-        str(agent.get("provider") or credentials.get("provider") or os.getenv("EXTERNAL_PROVIDER") or "")
-        .strip()
-        or None
-    )
-    model = (
-        str(agent.get("model") or credentials.get("model") or os.getenv("EXTERNAL_MODEL") or "")
-        .strip()
-        or None
-    )
-    external_api_key = (os.getenv("EXTERNAL_API_KEY") or "").strip() or None
-    base_url_override = (
-        str(agent.get("base_url") or credentials.get("base_url") or os.getenv("EXTERNAL_BASE_URL") or "")
-        .strip()
-        or None
-    )
-    client.set_byok_context(
-        provider=provider,
-        model=model,
-        external_api_key=external_api_key,
-        base_url_override=base_url_override,
-    )
 
 
 def _task_navigation_hints(task: Mapping[str, Any], *, task_id: str) -> list[dict[str, str]]:
@@ -228,7 +199,7 @@ async def _audit_receipt_async(args: argparse.Namespace) -> int:
         base_url=base_url,
         access_token=str(access_token) if access_token else None,
     ) as client:
-        _apply_local_byok_context(client, agent=agent, credentials=credentials)
+        apply_local_byok_context(client, agent=agent, credentials=credentials)
 
         if args.task_id:
             if not access_token:
