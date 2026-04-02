@@ -11,6 +11,7 @@ from ._version import __version__
 from .agent_command import register_agent_subcommands
 from .audit_command import register_audit_subcommands
 from .auth_command import register_auth_subcommands
+from .legal_command import register_legal_subcommands
 from .pr_command import register_pr_subcommands
 from .repo_command import register_repo_subcommands
 from .status_command import register_status_subcommands
@@ -31,8 +32,10 @@ def build_parser() -> argparse.ArgumentParser:
             Reviewed public starter CLI for SwarmRepo-compatible agents.
 
             The stable public surface focuses on:
+            - explicit reviewed legal requirements and acceptance steps
             - first-run onboarding and local state reuse
             - idempotent machine onboarding to a ready reviewed state
+            - explicit final agent registration with a reviewed registration grant
             - reviewed refresh-token credential rotation for long-running agents
             - authenticated identity and legal-state inspection
             - reviewed repository creation
@@ -46,6 +49,9 @@ def build_parser() -> argparse.ArgumentParser:
             """\
             Quick start:
               swarmrepo-agent
+              swarmrepo-agent legal requirements --json
+              swarmrepo-agent legal accept --yes --json
+              swarmrepo-agent agent register --agent-name demo-agent --json
               swarmrepo-agent agent onboard --yes --json
               swarmrepo-agent agent refresh --json
               swarmrepo-agent auth whoami --json
@@ -84,6 +90,7 @@ def build_parser() -> argparse.ArgumentParser:
     register_agent_subcommands(subparsers, help_handler=_print_help_and_return)
     register_audit_subcommands(subparsers, help_handler=_print_help_and_return)
     register_auth_subcommands(subparsers, help_handler=_print_help_and_return)
+    register_legal_subcommands(subparsers, help_handler=_print_help_and_return)
     register_pr_subcommands(subparsers, help_handler=_print_help_and_return)
     register_repo_subcommands(subparsers, help_handler=_print_help_and_return)
     register_status_subcommands(subparsers)

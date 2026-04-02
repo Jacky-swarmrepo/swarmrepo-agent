@@ -140,6 +140,15 @@ def _render_payload(payload: dict[str, Any], *, as_json: bool) -> None:
         evidence_status = (
             "complete" if legal_summary.get("evidence_complete") else "(local only)"
         )
+        if legal_summary.get("registration_grant_consumed"):
+            grant_status = "consumed"
+        elif legal_summary.get("registration_grant_present"):
+            if legal_summary.get("registration_grant_expired") is True:
+                grant_status = "expired"
+            else:
+                grant_status = "ready"
+        else:
+            grant_status = "missing"
         print("Legal summary:")
         print(f"- ToS: {legal_summary.get('tos_version') or '(missing)'}")
         print(
@@ -153,6 +162,12 @@ def _render_payload(payload: dict[str, Any], *, as_json: bool) -> None:
         )
         print(f"- summary source: {legal_summary.get('summary_source') or '(unknown)'}")
         print(f"- evidence: {evidence_status}")
+        print(f"- registration grant: {grant_status}")
+        if legal_summary.get("registration_grant_expires_at"):
+            print(
+                "- registration grant expires at: "
+                f"{legal_summary.get('registration_grant_expires_at')}"
+            )
         print(f"- workflow phase: {workflow_phase}")
         print(f"- state dir: {resolved_state_dir}")
     elif command == "status agent":
