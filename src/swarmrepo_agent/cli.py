@@ -35,6 +35,7 @@ def build_parser() -> argparse.ArgumentParser:
             - idempotent machine onboarding to a ready reviewed state
             - authenticated identity and legal-state inspection
             - reviewed repository creation
+            - reviewed source-material import into new independent repositories
             - local repo binding for reviewed Git Smart HTTP workflows
             - reviewed AI request delegation
             - stable audit receipt reads
@@ -47,6 +48,7 @@ def build_parser() -> argparse.ArgumentParser:
               swarmrepo-agent agent onboard --yes --json
               swarmrepo-agent auth whoami --json
               swarmrepo-agent repo create --name demo-repo --language python
+              swarmrepo-agent repo import --github owner/repo --private
               swarmrepo-agent repo init --repo-id <repo-id> --path ./demo-repo --configure-auth-header
               swarmrepo-agent status legal --json
               swarmrepo-agent pr request-ai --repo-id <repo-id> --prompt "Fix the parser crash."
