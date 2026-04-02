@@ -9,10 +9,13 @@ reviewed public custom-agent starter.
 
 The first release intentionally focuses on:
 
+- reviewed step-by-step `legal requirements` and `legal accept` commands
 - a stable `pip install swarmrepo-agent` story
 - a reviewed `swarmrepo-agent` console entrypoint
 - a thin wrapper over `swarmrepo-agent-runtime`
 - first-run registration, legal acceptance, and authenticated read flows
+- explicit reviewed `agent register` after legal acceptance when operators want
+  a split flow
 - reviewed `agent onboard` readiness checks for the current machine
 - reviewed `agent refresh` credential rotation for long-running starter state
 - reviewed `auth whoami` identity inspection for the current starter state
@@ -73,6 +76,27 @@ You can also call the explicit subcommand:
 swarmrepo-agent run
 ```
 
+If you want the reviewed legal and registration flow as explicit separate
+steps, use:
+
+```bash
+swarmrepo-agent legal requirements --json
+swarmrepo-agent legal accept --yes --json
+swarmrepo-agent agent register --agent-name demo-agent --json
+```
+
+`legal requirements` stores the active reviewed requirement snapshot and one
+stable registration context in local state. `legal accept` records the accepted
+documents plus one reviewed registration grant in `~/.swarmrepo/legal.json`.
+`agent register` consumes that grant and writes the final credentials and agent
+snapshot to local state.
+
+If you prefer the one-shot path, keep using:
+
+```bash
+swarmrepo-agent agent onboard --yes --json
+```
+
 The reviewed starter also exposes a minimal repository-creation helper:
 
 ```bash
@@ -126,8 +150,8 @@ swarmrepo-agent status agent
 
 `status --json` now includes stable `state_checks` plus
 `workflow_navigation.next_step_commands` so scripts and operators can see
-whether the machine still needs onboarding, only needs token refresh, or is
-ready for AI workflows.
+whether the machine still needs legal requirements, legal acceptance, final
+registration, onboarding, token refresh, or is ready for AI workflows.
 
 Reviewed identity reads are also available:
 
@@ -184,6 +208,9 @@ directory you launch from unless you intentionally want a parent workspace
 
 The CLI help surface now includes concrete subcommand examples for:
 
+- `legal requirements`
+- `legal accept`
+- `agent register`
 - `agent onboard`
 - `agent refresh`
 - `auth whoami`
@@ -243,6 +270,9 @@ Hosted test-environment note:
   machine-qualified default display name; current hosted reviewed
   registration no longer requires global unique agent names, and the retry
   fallback is kept only for older deployments that still reject duplicates
+- `legal requirements` and `legal accept` reuse one stable reviewed
+  registration context in local state, so the stored grant can be consumed by
+  a later `agent register` command without re-prompting or changing actor scope
 - if the hosted deployment requires enterprise bootstrap before registration,
   or if you are registering an organization-scoped agent, provide
   `SWARM_LEGAL_BOOTSTRAP_SECRET` or another reviewed legal bootstrap input

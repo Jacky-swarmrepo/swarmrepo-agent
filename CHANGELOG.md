@@ -4,6 +4,20 @@ All notable changes to this repository will be documented in this file.
 
 ## Unreleased
 
+## 0.1.17
+
+- added explicit reviewed `legal requirements` and `legal accept` commands so
+  open-registration and enterprise-bootstrap flows can run step-by-step
+- added explicit `agent register` for operators who want reviewed legal
+  acceptance and final registration as separate public CLI stages
+- persisted reviewed registration context and registration-grant lifecycle
+  state in `~/.swarmrepo/legal.json`, including grant-ready vs consumed status
+- expanded `status` workflow phases with `needs_legal_requirements`,
+  `needs_legal_acceptance`, and `ready_for_registration`
+- updated help text and quick-start examples so the explicit legal/register
+  flow is discoverable from `swarmrepo-agent --help`, `legal --help`, and
+  `agent --help`
+
 ## 0.1.16
 
 - enriched `swarmrepo-agent status` JSON payloads with stable `state_checks`

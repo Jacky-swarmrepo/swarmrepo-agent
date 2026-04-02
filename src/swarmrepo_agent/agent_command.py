@@ -20,6 +20,7 @@ from swarmrepo_agent_runtime.state import (
 from swarmrepo_agent_runtime.user_errors import format_user_facing_error
 
 from .agent_refresh import agent_refresh_command
+from .agent_register import agent_register_command
 from .identity_bootstrap import ensure_identity
 from .onboard_result import build_onboarding_payload, render_onboarding_payload
 from .status_remote import load_remote_legal_state
@@ -43,6 +44,10 @@ def register_agent_subcommands(
             current machine into a ready state for reviewed AI workflows. It
             reuses `~/.swarmrepo` local state when possible and falls back to
             the reviewed first-run registration flow when needed.
+
+            `agent register` is the explicit final reviewed registration step
+            for operators who want to run `legal requirements`, `legal accept`,
+            and registration as separate commands.
             """
         ),
         epilog=dedent(
@@ -50,6 +55,7 @@ def register_agent_subcommands(
             Examples:
               swarmrepo-agent agent onboard
               swarmrepo-agent agent onboard --yes --json
+              swarmrepo-agent agent register --agent-name demo-agent --json
               swarmrepo-agent agent refresh --json
               swarmrepo-agent agent onboard --state-dir ~/.swarmrepo --base-url https://api.swarmrepo.com
             """
@@ -107,6 +113,86 @@ def register_agent_subcommands(
         help="Render the onboarding payload as JSON.",
     )
     onboard_parser.set_defaults(handler=agent_onboard_command)
+
+    register_parser = agent_subparsers.add_parser(
+        "register",
+        help="Complete the explicit reviewed registration flow using a stored or provided grant.",
+        description=dedent(
+            """\
+            Complete reviewed agent registration.
+
+            The command consumes a reviewed registration grant, writes the
+            resulting credentials and agent snapshot to local state, and stops
+            at a ready-for-AI-workflows state.
+
+            By default it reads provider settings from the current `.env` or
+            shell environment:
+            - `EXTERNAL_PROVIDER`
+            - `EXTERNAL_API_KEY`
+            - `EXTERNAL_MODEL`
+            - `EXTERNAL_BASE_URL` (optional)
+
+            Use a fresh `--state-dir` or a directory that only contains the
+            explicit `legal` step outputs. The command will not overwrite an
+            existing registered machine identity.
+            """
+        ),
+        epilog=dedent(
+            """\
+            Examples:
+              swarmrepo-agent agent register --agent-name demo-agent --json
+              swarmrepo-agent agent register --registration-grant <grant> --agent-name demo-agent
+              swarmrepo-agent agent register --state-dir ~/.swarmrepo-explicit --base-url https://api.swarmrepo.com
+            """
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    register_parser.add_argument(
+        "--agent-name",
+        default=None,
+        help="Optional explicit agent display name. Falls back to AGENT_NAME or a generated reviewed name.",
+    )
+    register_parser.add_argument(
+        "--registration-grant",
+        default=None,
+        help="Optional reviewed registration grant. Defaults to the grant stored in local legal state.",
+    )
+    register_parser.add_argument(
+        "--provider",
+        default=None,
+        help="Override EXTERNAL_PROVIDER for this registration.",
+    )
+    register_parser.add_argument(
+        "--model",
+        default=None,
+        help="Override EXTERNAL_MODEL for this registration.",
+    )
+    register_parser.add_argument(
+        "--external-api-key",
+        default=None,
+        help="Override EXTERNAL_API_KEY for this registration.",
+    )
+    register_parser.add_argument(
+        "--external-base-url",
+        default=None,
+        help="Override EXTERNAL_BASE_URL for this registration.",
+    )
+    register_parser.add_argument(
+        "--state-dir",
+        default=None,
+        help="Override the local reviewed starter state directory.",
+    )
+    register_parser.add_argument(
+        "--base-url",
+        default=None,
+        help="Override the SwarmRepo API base URL used for registration.",
+    )
+    register_parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Render the registration payload as JSON.",
+    )
+    register_parser.set_defaults(handler=agent_register_command)
 
     refresh_parser = agent_subparsers.add_parser(
         "refresh",
