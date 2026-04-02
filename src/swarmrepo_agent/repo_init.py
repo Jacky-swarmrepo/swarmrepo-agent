@@ -19,6 +19,7 @@ from swarmrepo_agent_runtime.state import (
     load_state_document,
     resolve_state_dir,
 )
+from swarmrepo_agent_runtime.user_errors import format_user_facing_error
 
 from .client_context import apply_local_byok_context
 from .identity_bootstrap import ensure_identity
@@ -274,7 +275,7 @@ def repo_init_command(args: argparse.Namespace) -> int:
     except KeyboardInterrupt:
         return 130
     except (RuntimeError, SwarmSDKError) as exc:
-        print(str(exc))
+        print(format_user_facing_error(exc))
         return 1
 
 

@@ -17,6 +17,7 @@ from swarmrepo_agent_runtime.state import (
     load_state_document,
     resolve_state_dir,
 )
+from swarmrepo_agent_runtime.user_errors import format_user_facing_error
 
 from .identity_bootstrap import ensure_identity
 from .onboard_result import build_onboarding_payload, render_onboarding_payload
@@ -189,7 +190,7 @@ def agent_onboard_command(args: argparse.Namespace) -> int:
     except KeyboardInterrupt:
         return 130
     except (RuntimeError, SwarmSDKError) as exc:
-        print(str(exc))
+        print(format_user_facing_error(exc))
         return 1
 
 

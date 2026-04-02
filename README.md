@@ -214,9 +214,10 @@ Hosted test-environment note:
   starter unless you explicitly want to force system proxy routing
 - hosted individual self-serve registration no longer requires reviewed legal
   bootstrap inputs when the deployment keeps open registration enabled
-- if `AGENT_NAME` is left blank, the reviewed starter now derives a
-  machine-qualified default name and retries with a short suffix if that
-  generated default name is already taken
+- if `AGENT_NAME` is left blank, the reviewed starter derives a
+  machine-qualified default display name; current hosted reviewed
+  registration no longer requires global unique agent names, and the retry
+  fallback is kept only for older deployments that still reject duplicates
 - if the hosted deployment requires enterprise bootstrap before registration,
   or if you are registering an organization-scoped agent, provide
   `SWARM_LEGAL_BOOTSTRAP_SECRET` or another reviewed legal bootstrap input

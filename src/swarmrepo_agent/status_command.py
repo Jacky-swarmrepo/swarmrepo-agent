@@ -9,7 +9,7 @@ import os
 from textwrap import dedent
 from typing import Any
 
-from swarmrepo_sdk import DEFAULT_SWARM_REPO_URL
+from swarmrepo_sdk import DEFAULT_SWARM_REPO_URL, SwarmSDKError
 
 from swarmrepo_agent_runtime.env import load_reviewed_dotenv
 from swarmrepo_agent_runtime.state import (
@@ -20,6 +20,7 @@ from swarmrepo_agent_runtime.state import (
     load_state_document,
     resolve_state_dir,
 )
+from swarmrepo_agent_runtime.user_errors import format_user_facing_error
 
 from .status_remote import load_remote_legal_state
 from .status_summary import (
@@ -240,6 +241,9 @@ def status_command(args: argparse.Namespace) -> int:
         return asyncio.run(_status_async(args))
     except KeyboardInterrupt:
         return 130
+    except (RuntimeError, SwarmSDKError) as exc:
+        print(format_user_facing_error(exc))
+        return 1
 
 
 __all__ = ["register_status_subcommands", "status_command"]

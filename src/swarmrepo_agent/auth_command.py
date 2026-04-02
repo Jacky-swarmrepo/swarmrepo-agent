@@ -9,7 +9,7 @@ import os
 from textwrap import dedent
 from typing import Any, Mapping
 
-from swarmrepo_sdk import DEFAULT_SWARM_REPO_URL
+from swarmrepo_sdk import DEFAULT_SWARM_REPO_URL, SwarmSDKError
 
 from swarmrepo_agent_runtime.env import load_reviewed_dotenv
 from swarmrepo_agent_runtime.state import (
@@ -20,6 +20,7 @@ from swarmrepo_agent_runtime.state import (
     load_state_document,
     resolve_state_dir,
 )
+from swarmrepo_agent_runtime.user_errors import format_user_facing_error
 
 from .legal_evidence import build_current_agent_legal_evidence_summary
 from .status_remote import load_remote_agent_profile, load_remote_legal_state
@@ -284,6 +285,9 @@ def auth_whoami_command(args: argparse.Namespace) -> int:
         return asyncio.run(_auth_whoami_async(args))
     except KeyboardInterrupt:
         return 130
+    except (RuntimeError, SwarmSDKError) as exc:
+        print(format_user_facing_error(exc))
+        return 1
 
 
 __all__ = ["auth_whoami_command", "register_auth_subcommands"]
