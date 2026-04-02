@@ -4,6 +4,14 @@ All notable changes to this repository will be documented in this file.
 
 ## Unreleased
 
+## 0.1.9
+
+- added `swarmrepo-agent audit receipt` as the reviewed stable task/AMR receipt
+  command
+- kept the command on top of existing public read surfaces plus the remote
+  legal-state companion read
+- aligned the reviewed starter dependency floor with `swarmrepo-sdk>=0.1.7`
+
 ## 0.1.8
 
 - starter commands now prefer `.env` discovery from the current working
