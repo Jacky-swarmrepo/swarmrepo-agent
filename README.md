@@ -16,6 +16,7 @@ The first release intentionally focuses on:
 - reviewed `agent onboard` readiness checks for the current machine
 - reviewed `auth whoami` identity inspection for the current starter state
 - reviewed repository creation through `swarmrepo-agent repo create`
+- reviewed local worktree binding through `swarmrepo-agent repo init`
 - reviewed starter-local `status`, `status legal`, `status auth`, and `status agent`
 - reviewed AI request delegation through `swarmrepo-agent pr request-ai`
 
@@ -75,6 +76,18 @@ The reviewed starter also exposes a minimal repository-creation helper:
 ```bash
 swarmrepo-agent repo create --name demo-repo --language python
 ```
+
+After creating or selecting a hosted repository, bind one local worktree to the
+reviewed remote:
+
+```bash
+swarmrepo-agent repo init --repo-id <repo-id> --path ./demo-repo
+swarmrepo-agent repo init --repo-id <repo-id> --path ./demo-repo --configure-auth-header --json
+```
+
+`repo init` creates or reuses a local git worktree, configures a reviewed Git
+remote, and writes repo-root binding metadata to
+`.swarmrepo_platform/repo_binding.json`.
 
 To seed an initial file tree, point the command at a JSON object mapping file
 paths to file contents:
@@ -151,6 +164,7 @@ The CLI help surface now includes concrete subcommand examples for:
 - `agent onboard`
 - `auth whoami`
 - `repo create`
+- `repo init`
 - `status`, `status legal`, `status auth`, and `status agent`
 - `pr request-ai`
 - `audit receipt`
@@ -247,6 +261,14 @@ double-register the same starter identity.
 If you override `AGENT_STATE_DIR`, prefer an absolute path. Relative overrides
 are still supported, but starter output now resolves them to an absolute path
 before printing.
+
+Repo-root workflow metadata does not live under `~/.swarmrepo`. The reviewed
+starter writes local repo binding documents to:
+
+- `.swarmrepo_platform/repo_binding.json`
+
+`repo init` also ensures `.swarmrepo_platform/` is ignored by the local git
+worktree so repo-private runtime metadata does not get committed by default.
 
 ## Relationship to `swarmrepo-agent-runtime`
 

@@ -12,7 +12,7 @@ from .agent_command import register_agent_subcommands
 from .audit_command import register_audit_subcommands
 from .auth_command import register_auth_subcommands
 from .pr_command import register_pr_subcommands
-from .repo_create import register_repo_subcommands
+from .repo_command import register_repo_subcommands
 from .status_command import register_status_subcommands
 
 
@@ -33,6 +33,7 @@ def build_parser() -> argparse.ArgumentParser:
             - idempotent machine onboarding to a ready reviewed state
             - authenticated identity and legal-state inspection
             - reviewed repository creation
+            - local repo binding for reviewed Git Smart HTTP workflows
             - reviewed AI request delegation
             - stable audit receipt reads
             """
@@ -44,6 +45,7 @@ def build_parser() -> argparse.ArgumentParser:
               swarmrepo-agent agent onboard --yes --json
               swarmrepo-agent auth whoami --json
               swarmrepo-agent repo create --name demo-repo --language python
+              swarmrepo-agent repo init --repo-id <repo-id> --path ./demo-repo --configure-auth-header
               swarmrepo-agent status legal --json
               swarmrepo-agent pr request-ai --repo-id <repo-id> --prompt "Fix the parser crash."
               swarmrepo-agent audit receipt --task-id <issue-id> --json
