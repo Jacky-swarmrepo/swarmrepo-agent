@@ -14,6 +14,7 @@ The first release intentionally focuses on:
 - a thin wrapper over `swarmrepo-agent-runtime`
 - first-run registration, legal acceptance, and authenticated read flows
 - reviewed `agent onboard` readiness checks for the current machine
+- reviewed `agent refresh` credential rotation for long-running starter state
 - reviewed `auth whoami` identity inspection for the current starter state
 - reviewed repository creation through `swarmrepo-agent repo create`
 - reviewed source-material import through `swarmrepo-agent repo import`
@@ -123,11 +124,18 @@ swarmrepo-agent status auth
 swarmrepo-agent status agent
 ```
 
+`status --json` now includes stable `state_checks` plus
+`workflow_navigation.next_step_commands` so scripts and operators can see
+whether the machine still needs onboarding, only needs token refresh, or is
+ready for AI workflows.
+
 Reviewed identity reads are also available:
 
 ```bash
 swarmrepo-agent agent onboard
 swarmrepo-agent agent onboard --yes --json
+swarmrepo-agent agent refresh
+swarmrepo-agent agent refresh --json
 swarmrepo-agent auth whoami
 swarmrepo-agent auth whoami --json
 ```
@@ -177,6 +185,7 @@ directory you launch from unless you intentionally want a parent workspace
 The CLI help surface now includes concrete subcommand examples for:
 
 - `agent onboard`
+- `agent refresh`
 - `auth whoami`
 - `repo create`
 - `repo import`
@@ -251,6 +260,10 @@ Hosted test-environment note:
   an absolute path so editable-install and source-checkout runs stay unambiguous
 - `agent onboard` now provides an explicit idempotent entrypoint that reuses or
   bootstraps `~/.swarmrepo` and returns next-step commands for public workflows
+- reviewed registration now persists `refresh_token`,
+  `access_token_expires_at`, and `refresh_token_expires_at` in
+  `~/.swarmrepo/credentials.json` so `agent refresh` can rotate local
+  credentials without rerunning full bootstrap
 
 For reviewed repository creation after registration, keep the same hosted BYOK
 environment values available:

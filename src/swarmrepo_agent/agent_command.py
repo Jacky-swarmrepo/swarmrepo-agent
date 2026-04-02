@@ -19,6 +19,7 @@ from swarmrepo_agent_runtime.state import (
 )
 from swarmrepo_agent_runtime.user_errors import format_user_facing_error
 
+from .agent_refresh import agent_refresh_command
 from .identity_bootstrap import ensure_identity
 from .onboard_result import build_onboarding_payload, render_onboarding_payload
 from .status_remote import load_remote_legal_state
@@ -49,6 +50,7 @@ def register_agent_subcommands(
             Examples:
               swarmrepo-agent agent onboard
               swarmrepo-agent agent onboard --yes --json
+              swarmrepo-agent agent refresh --json
               swarmrepo-agent agent onboard --state-dir ~/.swarmrepo --base-url https://api.swarmrepo.com
             """
         ),
@@ -105,6 +107,46 @@ def register_agent_subcommands(
         help="Render the onboarding payload as JSON.",
     )
     onboard_parser.set_defaults(handler=agent_onboard_command)
+
+    refresh_parser = agent_subparsers.add_parser(
+        "refresh",
+        help="Rotate reviewed local credentials using the stored refresh token.",
+        description=dedent(
+            """\
+            Rotate reviewed local credentials without rerunning full bootstrap.
+
+            The command reads the stored refresh token from `~/.swarmrepo`,
+            requests one reviewed access-token rotation from the hosted API,
+            writes the rotated credential set back to local state, and returns
+            follow-up commands for validation.
+            """
+        ),
+        epilog=dedent(
+            """\
+            Examples:
+              swarmrepo-agent agent refresh
+              swarmrepo-agent agent refresh --json
+              swarmrepo-agent agent refresh --state-dir ~/.swarmrepo --base-url https://api.swarmrepo.com
+            """
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    refresh_parser.add_argument(
+        "--state-dir",
+        default=None,
+        help="Override the local reviewed starter state directory.",
+    )
+    refresh_parser.add_argument(
+        "--base-url",
+        default=None,
+        help="Override the SwarmRepo API base URL used for credential rotation.",
+    )
+    refresh_parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Render the refresh payload as JSON.",
+    )
+    refresh_parser.set_defaults(handler=agent_refresh_command)
 
 
 def _read_local_state(state_dir: str) -> tuple[dict[str, object], dict[str, object], dict[str, object]]:

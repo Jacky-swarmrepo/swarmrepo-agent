@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from typing import Any, Mapping
 
 
@@ -31,10 +32,17 @@ def _pick_accepted_document(
 def build_auth_summary(credentials: Mapping[str, Any]) -> dict[str, Any]:
     """Build a minimal auth summary from structured starter credentials."""
     refresh_token_present = bool(credentials.get("refresh_token"))
+    access_token_expires_at = _normalize_timestamp(credentials.get("access_token_expires_at"))
+    refresh_token_expires_at = _normalize_timestamp(credentials.get("refresh_token_expires_at"))
     return {
         "access_token_present": bool(credentials.get("access_token")),
         "refresh_token_present": refresh_token_present,
         "access_token_saved_at": credentials.get("saved_at"),
+        "last_refresh_at": credentials.get("last_refresh_at"),
+        "access_token_expires_at": access_token_expires_at,
+        "refresh_token_expires_at": refresh_token_expires_at,
+        "access_token_expired": _timestamp_is_expired(access_token_expires_at),
+        "refresh_token_expired": _timestamp_is_expired(refresh_token_expires_at),
         "refresh_token_storage": "local_state" if refresh_token_present else None,
     }
 
@@ -133,12 +141,156 @@ def build_endpoint_summary(*, base_url: str, state_dir: str) -> dict[str, Any]:
     }
 
 
+def _next_step(command: str, reason: str) -> dict[str, str]:
+    return {
+        "command": command,
+        "reason": reason,
+    }
+
+
+def _normalize_timestamp(value: Any) -> str | None:
+    if not isinstance(value, str):
+        return None
+    candidate = value.strip()
+    if not candidate:
+        return None
+    if candidate.endswith("Z"):
+        candidate = f"{candidate[:-1]}+00:00"
+    try:
+        normalized = datetime.fromisoformat(candidate)
+    except ValueError:
+        return None
+    if normalized.tzinfo is None:
+        normalized = normalized.replace(tzinfo=timezone.utc)
+    else:
+        normalized = normalized.astimezone(timezone.utc)
+    return normalized.isoformat()
+
+
+def _timestamp_is_expired(value: str | None) -> bool | None:
+    if value is None:
+        return None
+    try:
+        timestamp = datetime.fromisoformat(value)
+    except ValueError:
+        return None
+    if timestamp.tzinfo is None:
+        timestamp = timestamp.replace(tzinfo=timezone.utc)
+    else:
+        timestamp = timestamp.astimezone(timezone.utc)
+    return timestamp <= datetime.now(timezone.utc)
+
+
+def build_state_checks(
+    *,
+    auth_summary: Mapping[str, Any],
+    legal_summary: Mapping[str, Any],
+    agent_summary: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Build stable readiness checks for the reviewed starter state."""
+    access_token_ready = bool(auth_summary.get("access_token_present")) and (
+        auth_summary.get("access_token_expired") is not True
+    )
+    refresh_token_ready = bool(auth_summary.get("refresh_token_present")) and (
+        auth_summary.get("refresh_token_expired") is not True
+    )
+    return {
+        "access_token_ready": access_token_ready,
+        "refresh_token_ready": refresh_token_ready,
+        "legal_ready": bool(legal_summary.get("tos_version"))
+        and bool(legal_summary.get("agent_contributor_terms_version")),
+        "agent_ready": bool(agent_summary.get("agent_id") or agent_summary.get("agent_name")),
+        "remote_legal_validated": legal_summary.get("summary_source") == "remote_validated",
+        "legal_evidence_complete": legal_summary.get("evidence_complete"),
+    }
+
+
+def build_workflow_navigation(*, state_checks: Mapping[str, Any]) -> dict[str, Any]:
+    """Build stable next-step hints for the reviewed public status surface."""
+    is_ready = all(
+        (
+            state_checks.get("access_token_ready"),
+            state_checks.get("legal_ready"),
+            state_checks.get("agent_ready"),
+        )
+    )
+    if not is_ready:
+        if state_checks.get("refresh_token_ready") and state_checks.get("legal_ready") and state_checks.get("agent_ready"):
+            return {
+                "workflow_phase": "needs_token_refresh",
+                "next_step_commands": [
+                    _next_step(
+                        "swarmrepo-agent agent refresh --json",
+                        "Rotate reviewed local credentials from the stored refresh token.",
+                    ),
+                    _next_step(
+                        "swarmrepo-agent status auth --json",
+                        "Inspect local credential expiry and refresh-token availability.",
+                    ),
+                    _next_step(
+                        "swarmrepo-agent auth whoami --json",
+                        "Validate the refreshed access token against the hosted identity surface.",
+                    ),
+                ],
+            }
+        return {
+            "workflow_phase": "needs_onboarding",
+            "next_step_commands": [
+                _next_step(
+                    "swarmrepo-agent agent onboard --yes --json",
+                    "Run the reviewed idempotent onboarding flow for this machine.",
+                ),
+                _next_step(
+                    "swarmrepo-agent status auth --json",
+                    "Confirm whether a local access token is already present.",
+                ),
+                _next_step(
+                    "swarmrepo-agent status agent --json",
+                    "Inspect whether a starter-local agent identity already exists.",
+                ),
+                _next_step(
+                    "swarmrepo-agent status legal --json",
+                    "Inspect the currently saved legal acceptance summary.",
+                ),
+            ],
+        }
+
+    return {
+        "workflow_phase": "ready_for_ai_workflows",
+        "next_step_commands": [
+            _next_step(
+                "swarmrepo-agent auth whoami --json",
+                "Confirm the current remote-validated identity and legal context.",
+            ),
+            _next_step(
+                "swarmrepo-agent repo create --name demo-repo --language python",
+                "Create one reviewed repository container for a new workflow.",
+            ),
+            _next_step(
+                "swarmrepo-agent repo import --local-path ./project-src",
+                "Import one existing local source tree into a new reviewed repository.",
+            ),
+            _next_step(
+                'swarmrepo-agent pr request-ai --repo-id <repo-id> --prompt "Fix the parser crash."',
+                "Delegate one reviewed AI change request after a repository exists.",
+            ),
+            _next_step(
+                "swarmrepo-agent status legal --json",
+                "Inspect the authenticated remote legal evidence summary when needed.",
+            ),
+        ],
+    }
+
+
 def build_overview(
     *,
     auth_summary: Mapping[str, Any],
     legal_summary: Mapping[str, Any],
     agent_summary: Mapping[str, Any],
     endpoint_summary: Mapping[str, Any],
+    state_checks: Mapping[str, Any],
+    workflow_navigation: Mapping[str, Any],
+    current_agent_legal_evidence_summary: Mapping[str, Any] | None,
     remote_legal_error: Mapping[str, Any] | None,
 ) -> dict[str, Any]:
     """Build the combined status payload."""
@@ -147,6 +299,13 @@ def build_overview(
         "legal_summary": dict(legal_summary),
         "agent_summary": dict(agent_summary),
         "endpoint_summary": dict(endpoint_summary),
+        "state_checks": dict(state_checks),
+        "workflow_navigation": dict(workflow_navigation),
+        "current_agent_legal_evidence_summary": (
+            dict(current_agent_legal_evidence_summary)
+            if current_agent_legal_evidence_summary
+            else None
+        ),
         "remote_legal_error": dict(remote_legal_error) if remote_legal_error else None,
     }
 
@@ -157,4 +316,6 @@ __all__ = [
     "build_endpoint_summary",
     "build_legal_summary",
     "build_overview",
+    "build_state_checks",
+    "build_workflow_navigation",
 ]
