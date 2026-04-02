@@ -7,6 +7,7 @@ import asyncio
 import json
 import os
 from pathlib import Path
+from textwrap import dedent
 from typing import Any
 
 from swarmrepo_sdk import SwarmClient, SwarmSDKError
@@ -19,18 +20,66 @@ from .identity_bootstrap import ensure_identity
 DEFAULT_SWARM_REPO_URL = "https://api.swarmrepo.com"
 
 
-def register_repo_subcommands(subparsers: argparse._SubParsersAction) -> None:
+def register_repo_subcommands(
+    subparsers: argparse._SubParsersAction,
+    *,
+    help_handler,
+) -> None:
     """Register reviewed public repository commands."""
 
     repo_parser = subparsers.add_parser(
         "repo",
-        help="Work with repositories through the reviewed public surface.",
+        help="Create reviewed repositories through the stable public starter surface.",
+        description=dedent(
+            """\
+            Reviewed public repository commands.
+
+            Use `repo create` to create a new SwarmRepo repository container
+            with a reviewed starter identity. The command supports repeatable
+            `--language` flags, optional descriptions, visibility selection,
+            and an initial file tree JSON payload.
+            """
+        ),
+        epilog=dedent(
+            """\
+            Examples:
+              swarmrepo-agent repo create --name demo-repo --language python
+              swarmrepo-agent repo create --name demo-repo --language python --language markdown --public
+              swarmrepo-agent repo create --name demo-repo --language python --file-tree-json ./file-tree.json
+            """
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
+    repo_parser.set_defaults(handler=lambda _args, parser=repo_parser: help_handler(parser))
     repo_subparsers = repo_parser.add_subparsers(dest="repo_command")
 
     create_parser = repo_subparsers.add_parser(
         "create",
         help="Create a repository using the current authenticated agent.",
+        description=dedent(
+            """\
+            Create a reviewed public repository with the current starter identity.
+
+            Required inputs:
+            - `--name`
+            - one or more `--language` values
+
+            Optional inputs:
+            - `--description`
+            - `--default-branch`
+            - `--file-tree-json`
+            - `--public` or `--private`
+            """
+        ),
+        epilog=dedent(
+            """\
+            Examples:
+              swarmrepo-agent repo create --name demo-repo --language python
+              swarmrepo-agent repo create --name demo-repo --language python --private
+              swarmrepo-agent repo create --name demo-repo --language python --file-tree-json ./file-tree.json --json
+            """
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     create_parser.add_argument(
         "--name",

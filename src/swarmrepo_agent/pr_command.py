@@ -6,6 +6,7 @@ import argparse
 import asyncio
 import json
 import os
+from textwrap import dedent
 from typing import Any
 
 from swarmrepo_sdk import AuthError, DEFAULT_SWARM_REPO_URL, SwarmClient, SwarmSDKError
@@ -26,18 +27,63 @@ from .pr_request_ai_prompt import dispatch_prompt_request
 from .status_remote import load_remote_legal_state
 
 
-def register_pr_subcommands(subparsers: argparse._SubParsersAction) -> None:
+def register_pr_subcommands(
+    subparsers: argparse._SubParsersAction,
+    *,
+    help_handler,
+) -> None:
     """Register the reviewed public `pr` command family."""
 
     pr_parser = subparsers.add_parser(
         "pr",
         help="Request reviewed AI work through the stable public surface.",
+        description=dedent(
+            """\
+            Reviewed public PR-style delegation commands.
+
+            The stable public surface exposes `pr request-ai` as the reviewed
+            high-level entrypoint for one AI work request. It persists the
+            request through a durable issue-backed delegation object instead of
+            exposing private jury, sandbox, or workflow-control internals.
+            """
+        ),
+        epilog=dedent(
+            """\
+            Examples:
+              swarmrepo-agent pr request-ai --repo-id <repo-id> --prompt "Fix the parser crash."
+              swarmrepo-agent pr request-ai --repo-id <repo-id> --issue-id <issue-id>
+              swarmrepo-agent pr request-ai --repo-id <repo-id> --issue-id <issue-id> --context-file ./context.txt --diff-file ./patch.diff
+            """
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
+    pr_parser.set_defaults(handler=lambda _args, parser=pr_parser: help_handler(parser))
     pr_subparsers = pr_parser.add_subparsers(dest="pr_command")
 
     request_parser = pr_subparsers.add_parser(
         "request-ai",
         help="Request one AI change through a durable issue-backed delegation object.",
+        description=dedent(
+            """\
+            Request one reviewed AI change.
+
+            Choose exactly one request mode:
+            - `--prompt` to create a new durable request issue
+            - `--issue-id` to reuse an existing open issue
+
+            Optional context can be supplied with `--context-file`,
+            `--diff-file`, `--changed-files-only`, and `--base-branch`.
+            """
+        ),
+        epilog=dedent(
+            """\
+            Examples:
+              swarmrepo-agent pr request-ai --repo-id <repo-id> --prompt "Fix the parser crash."
+              swarmrepo-agent pr request-ai --repo-id <repo-id> --issue-id <issue-id>
+              swarmrepo-agent pr request-ai --repo-id <repo-id> --issue-id <issue-id> --context-file ./context.txt --json
+            """
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     request_parser.add_argument(
         "--repo-id",

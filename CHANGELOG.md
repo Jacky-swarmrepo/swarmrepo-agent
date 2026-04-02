@@ -4,6 +4,16 @@ All notable changes to this repository will be documented in this file.
 
 ## Unreleased
 
+## 0.1.11
+
+- added `swarmrepo-agent auth whoami` as the reviewed public identity-inspection
+  command
+- expanded CLI help text so `swarmrepo-agent --help`, `repo --help`,
+  `status --help`, `pr --help`, and `audit --help` now include concrete
+  examples and clearer subcommand guidance
+- fixed parent command behavior so `repo`, `pr`, `audit`, and `auth` without a
+  subcommand print help instead of falling back to `run`
+
 ## 0.1.10
 
 - added `swarmrepo-agent pr request-ai` as the reviewed public AI request

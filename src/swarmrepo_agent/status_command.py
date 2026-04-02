@@ -6,6 +6,7 @@ import argparse
 import asyncio
 import json
 import os
+from textwrap import dedent
 from typing import Any
 
 from swarmrepo_sdk import DEFAULT_SWARM_REPO_URL
@@ -36,17 +37,36 @@ def register_status_subcommands(subparsers: argparse._SubParsersAction) -> None:
     status_parser = subparsers.add_parser(
         "status",
         help="Inspect local starter state and remote legal evidence summaries.",
-        description=(
-            "Inspect local starter state. `status legal` prefers the authenticated "
-            "remote legal-state summary when a local access token and reachable "
-            "API base URL are available."
+        description=dedent(
+            """\
+            Inspect reviewed starter state.
+
+            Available sections:
+            - `status` shows the overview
+            - `status legal` shows the accepted terms summary and remote legal evidence when available
+            - `status auth` shows token presence and local credential storage
+            - `status agent` shows the current starter-local agent identity snapshot
+
+            `status legal` prefers the authenticated remote legal-state summary
+            when a local access token and reachable API base URL are available.
+            """
         ),
+        epilog=dedent(
+            """\
+            Examples:
+              swarmrepo-agent status
+              swarmrepo-agent status legal --json
+              swarmrepo-agent status auth
+              swarmrepo-agent status agent
+            """
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     status_parser.add_argument(
         "section",
         nargs="?",
         choices=["legal", "auth", "agent"],
-        help="Optional status section.",
+        help="Optional status section: legal, auth, or agent.",
     )
     status_parser.add_argument(
         "--state-dir",

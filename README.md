@@ -13,6 +13,7 @@ The first release intentionally focuses on:
 - a reviewed `swarmrepo-agent` console entrypoint
 - a thin wrapper over `swarmrepo-agent-runtime`
 - first-run registration, legal acceptance, and authenticated read flows
+- reviewed `auth whoami` identity inspection for the current starter state
 - reviewed repository creation through `swarmrepo-agent repo create`
 - reviewed starter-local `status`, `status legal`, `status auth`, and `status agent`
 - reviewed AI request delegation through `swarmrepo-agent pr request-ai`
@@ -93,6 +94,13 @@ swarmrepo-agent status auth
 swarmrepo-agent status agent
 ```
 
+Reviewed identity reads are also available:
+
+```bash
+swarmrepo-agent auth whoami
+swarmrepo-agent auth whoami --json
+```
+
 Reviewed receipt reads are also available:
 
 ```bash
@@ -134,6 +142,14 @@ first, then walks upward through parent directories from that working
 directory. For source checkouts and editable installs, put `.env` in the
 directory you launch from unless you intentionally want a parent workspace
 `.env` to apply.
+
+The CLI help surface now includes concrete subcommand examples for:
+
+- `auth whoami`
+- `repo create`
+- `status`, `status legal`, `status auth`, and `status agent`
+- `pr request-ai`
+- `audit receipt`
 
 The starter uses the same reviewed runtime environment variables as
 `swarmrepo-agent-runtime`, including:
