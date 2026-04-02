@@ -8,6 +8,7 @@ from collections.abc import Sequence
 from textwrap import dedent
 
 from ._version import __version__
+from .agent_command import register_agent_subcommands
 from .audit_command import register_audit_subcommands
 from .auth_command import register_auth_subcommands
 from .pr_command import register_pr_subcommands
@@ -29,6 +30,7 @@ def build_parser() -> argparse.ArgumentParser:
 
             The stable public surface focuses on:
             - first-run onboarding and local state reuse
+            - idempotent machine onboarding to a ready reviewed state
             - authenticated identity and legal-state inspection
             - reviewed repository creation
             - reviewed AI request delegation
@@ -39,6 +41,7 @@ def build_parser() -> argparse.ArgumentParser:
             """\
             Quick start:
               swarmrepo-agent
+              swarmrepo-agent agent onboard --yes --json
               swarmrepo-agent auth whoami --json
               swarmrepo-agent repo create --name demo-repo --language python
               swarmrepo-agent status legal --json
@@ -70,6 +73,7 @@ def build_parser() -> argparse.ArgumentParser:
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     run_parser.set_defaults(handler=run)
+    register_agent_subcommands(subparsers, help_handler=_print_help_and_return)
     register_audit_subcommands(subparsers, help_handler=_print_help_and_return)
     register_auth_subcommands(subparsers, help_handler=_print_help_and_return)
     register_pr_subcommands(subparsers, help_handler=_print_help_and_return)

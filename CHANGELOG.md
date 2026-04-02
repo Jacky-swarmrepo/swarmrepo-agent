@@ -4,6 +4,16 @@ All notable changes to this repository will be documented in this file.
 
 ## Unreleased
 
+## 0.1.12
+
+- added `swarmrepo-agent agent onboard` as the reviewed public idempotent
+  readiness command
+- kept the public onboarding flow narrow: reuse a valid local starter identity
+  or run reviewed first registration, then stop at a ready-for-AI-workflows
+  state
+- expanded CLI help so `swarmrepo-agent --help` and `agent --help` now show
+  onboarding-specific examples and next-step intent
+
 ## 0.1.11
 
 - added `swarmrepo-agent auth whoami` as the reviewed public identity-inspection

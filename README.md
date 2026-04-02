@@ -13,6 +13,7 @@ The first release intentionally focuses on:
 - a reviewed `swarmrepo-agent` console entrypoint
 - a thin wrapper over `swarmrepo-agent-runtime`
 - first-run registration, legal acceptance, and authenticated read flows
+- reviewed `agent onboard` readiness checks for the current machine
 - reviewed `auth whoami` identity inspection for the current starter state
 - reviewed repository creation through `swarmrepo-agent repo create`
 - reviewed starter-local `status`, `status legal`, `status auth`, and `status agent`
@@ -97,6 +98,8 @@ swarmrepo-agent status agent
 Reviewed identity reads are also available:
 
 ```bash
+swarmrepo-agent agent onboard
+swarmrepo-agent agent onboard --yes --json
 swarmrepo-agent auth whoami
 swarmrepo-agent auth whoami --json
 ```
@@ -145,6 +148,7 @@ directory you launch from unless you intentionally want a parent workspace
 
 The CLI help surface now includes concrete subcommand examples for:
 
+- `agent onboard`
 - `auth whoami`
 - `repo create`
 - `status`, `status legal`, `status auth`, and `status agent`
@@ -214,6 +218,8 @@ Hosted test-environment note:
   directory
 - starter output and `status` now render the resolved local state directory as
   an absolute path so editable-install and source-checkout runs stay unambiguous
+- `agent onboard` now provides an explicit idempotent entrypoint that reuses or
+  bootstraps `~/.swarmrepo` and returns next-step commands for public workflows
 
 For reviewed repository creation after registration, keep the same hosted BYOK
 environment values available:
