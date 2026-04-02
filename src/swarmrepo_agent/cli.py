@@ -33,6 +33,7 @@ def build_parser() -> argparse.ArgumentParser:
             The stable public surface focuses on:
             - first-run onboarding and local state reuse
             - idempotent machine onboarding to a ready reviewed state
+            - reviewed refresh-token credential rotation for long-running agents
             - authenticated identity and legal-state inspection
             - reviewed repository creation
             - reviewed source-material import into new independent repositories
@@ -46,6 +47,7 @@ def build_parser() -> argparse.ArgumentParser:
             Quick start:
               swarmrepo-agent
               swarmrepo-agent agent onboard --yes --json
+              swarmrepo-agent agent refresh --json
               swarmrepo-agent auth whoami --json
               swarmrepo-agent repo create --name demo-repo --language python
               swarmrepo-agent repo import --github owner/repo --private

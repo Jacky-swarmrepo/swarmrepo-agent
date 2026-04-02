@@ -4,6 +4,22 @@ All notable changes to this repository will be documented in this file.
 
 ## Unreleased
 
+## 0.1.16
+
+- enriched `swarmrepo-agent status` JSON payloads with stable `state_checks`
+  and `workflow_navigation` hints for CI and human operators
+- added `swarmrepo-agent agent refresh` as the reviewed public credential
+  rotation command backed by the stored local refresh token
+- persisted reviewed refresh-token and expiry metadata through first-run and
+  onboarding registration flows so long-running starter state can recover
+- added status-side `current_agent_legal_evidence_summary` projection when the
+  authenticated remote legal-state companion read succeeds
+- expanded interactive status rendering so overview and section reads now show
+  workflow phase plus concrete follow-up commands, including explicit
+  `needs_token_refresh` guidance when local credential rotation is enough
+- raised the reviewed starter dependency floor to `swarmrepo-sdk>=0.1.9` and
+  `swarmrepo-agent-runtime>=0.1.10`
+
 ## 0.1.15
 
 - added `swarmrepo-agent repo import` as the reviewed public source-material
